@@ -1,0 +1,11 @@
+To do:
+* Atualizar a documentação e tornar o repositório publico no GitHub
+* Criar um modelo de log genérico para registrar os Erros
+* Criar as entity Role e Permission para gerenciar authorization
+* Configurar o webpack para gerar os arquivos do servidor para produção
+
+Done:
+01/01/2022 - Criar repositories separados para MySQL e PostgresSQL
+23/12/2021 - Centralizar as configurações no settings.js
+22/12/2021 - Criar array com mensagens de erro para retornar aos usuários
+22/12/2021 - Testar expiração dos tokens diminuindo o tempo

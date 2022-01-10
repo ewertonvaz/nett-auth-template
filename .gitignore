@@ -1,0 +1,9 @@
+node_modules
+
+.env
+.env.dev
+.end.prod
+dist/config/settings.js
+src/config/settings.ts
+_volumes/scripts/script-mysql.sql
+_volumes/dockerfiles/init.sql
