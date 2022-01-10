@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-//import userRepository from '../repositories/user.mysql.repository';
-import userRepository from '../repositories/user.postgres.repository';
+import userRepository from '../repositories/user.mysql.repository';
+//import userRepository from '../repositories/user.postgres.repository';
 import jwtAuthenticator from '../middlewares/jwt.authentication.middleware';
 import JWT from 'jsonwebtoken';
 import conf from '../config/settings';
