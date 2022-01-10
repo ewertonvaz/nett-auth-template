@@ -1,83 +1,12 @@
-# Template de Servidor de autenticação 
-### Servidor de autenticação express e Node.js escrito em TypeScript e com TypeOrm
-## Pastas e arquivos
-
-**/dist** : O código do servidor já transpilado para Javascript e que vai ser interpretado pelo servidor Node.js.
-
-**/src**: código fonte em typescript do servidor.
-
-**docker-compose.yml** : arquivo contendo as definições dos serviços e containers do Docker. Estão configurados o Node e MySQL.
-
-## Pré-requisitos
-
-* Node.js
-* Yarn (opcional)
-* Editor de código (VSCode de preferência)
-* Docker (opcional) 
-* MySQL server caso não queira usar o Docker
-* TypeScript instalado, de preferência globalmente
-
-Caso não queira usar o **yarn** pode subsituir os comando **yarn add** por **npm install --save** e **yarn add <pacote> -D** por **npm install ---save-dev <pacote>**
-
-## Preparar o ambiente
-
-Antes de ativar o servidor MySQL será necessário gerar a chave secreta que será usado pelo sistema nas operações de criptografia.
-
-Primeiro copiar / renomear o arquivo **src/config/settings.example.ts** para **src/config/settings.ts**
-
-Em seguida executar o comando abaixo:
-
-```
-yarn generate
-```
-
-ou
-
-```
-npm run generate
-```
-
-Copiar o valor de **secret_key** e incluir nos locais correspondees dos arquivos **src/config/settings.ts**  e **_volumes/scripts/script-mysql.sql**, neste último substituir o campo <senha_do_admin> pela senha do administrador que você escolher.
-
-## Desenvolvimento
-
-Em seu ambiente de desenvolvimento deve ter instalado o Node, e o compilador TypeScript. Entrar na pasta do projeto executar o comando:
-
-```
-yarn install
-```
-
-
-Para iniciar o servidor em modo de desenvolvimento executar o comando:
-
-```
-yarn dev
-```
-
-## Produção
-
-Usar o shell  para executar os comandos abaixo:
-
-```
-yarn install
-yarn build
-```
-
-No caso de serem feitas alterações na API será necessário fazer novamente o build executando o comando
-
-```
-yarn build
-```
-
-E em seguida reiniciar o container correspondente ao node-server.
-
 # NTT Auth Template
 
-Este projeto é um template de autenticação para ser utilizado como ponto de partida para aplicações web. Ele é composto de um servidor implementado em nodeJS e Type ORM. 
+Este projeto é um template com o objetivo de ser utilizado como ponto de partida para desenvolviemnto de uma API de autenticação para aplicações web. 
+
+Ele é composto de um servidor implementado em NodeJS e Type ORM. 
 
 Faz parte do projeto um exemplo de front-end desenvolvido em Vue.js, mas que pode ser facilmente substiutuído pelo frameworjk de sua preferência. Escrevi em Vue.js porque é o framework que gosto mais e conheço melhor.
 
-A sigla VNT vem das inicias de Vue.JS, Node.Js e TypeORM
+A sigla NTT vem das inicias de Node.Js, Typescript e TypeORM, e o projeto foi criado para fins de aprendizado destas tecnologias.
 
 ## Pré Requisitos
 
@@ -139,14 +68,16 @@ Outra opção é utilizar o Postman acessando os end-points da api que estão de
 
 ### Login
 
-O último passo acima faz com que o servidor node fique ativo na porta 3000. Para fazer o lgin utilize as credenciais abaixo:
+O último passo acima faz com que o servidor node fique ativo na porta 3000. Para fazer o login utilize as credenciais abaixo:
 
 * Email: admin@mysite.com
 * Password: secret
 
+Após fazer o login é recomendável que você registre um usuário que será o Administrador....
 
 
-## Customize configuration
+
+## Configuração customizada
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 

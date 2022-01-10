@@ -3,6 +3,7 @@ To do:
 * Criar um modelo de log genérico para registrar os Erros
 * Criar as entity Role e Permission para gerenciar authorization
 * Configurar o webpack para gerar os arquivos do servidor para produção
+* Modificar o script generate para que altere automaticamente os arquivos de configuração
 
 Done:
 01/01/2022 - Criar repositories separados para MySQL e PostgresSQL
