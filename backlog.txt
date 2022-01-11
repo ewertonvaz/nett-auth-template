@@ -1,12 +1,12 @@
 To do:
-* Atualizar a documentação e tornar o repositório publico no GitHub
 * Criar um modelo de log genérico para registrar os Erros
 * Criar as entity Role e Permission para gerenciar authorization
 * Configurar o webpack para gerar os arquivos do servidor para produção
-* Modificar o script generate para que altere automaticamente os arquivos de configuração
 
 Done:
-01/01/2022 - Criar repositories separados para MySQL e PostgresSQL
-23/12/2021 - Centralizar as configurações no settings.js
-22/12/2021 - Criar array com mensagens de erro para retornar aos usuários
-22/12/2021 - Testar expiração dos tokens diminuindo o tempo
+11/01/2022 - Modificado o script generate para que altere automaticamente os arquivos de configuração
+10/01/2022 - Atualizada a documentação e criado repositório público no GitHub
+01/01/2022 - Criados repositories separados para MySQL e PostgresSQL
+23/12/2021 - Centralizadas as configurações no settings.js
+22/12/2021 - Criado array com mensagens de erro para retornar aos usuários
+22/12/2021 - Testada a expiração dos tokens diminuindo o tempo de validade
