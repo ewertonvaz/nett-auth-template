@@ -17,5 +17,5 @@ CREATE TABLE `user` (
 );
 
 SET @secret_key = CONCAT('Use o script yarn generate e coloque sua chave secreta aqui', 'admin@mysite.com');
-SET @crypt_str = HEX(AES_ENCRYPT('senha_do_admin', @secret_key, 512));
+SET @crypt_str = HEX(AES_ENCRYPT('secret', @secret_key, 512));
 INSERT INTO `authdb`.`user` (`name`, `email`, `password`, `is_admin`) VALUES ('admin', 'admin@mysite.com', @crypt_str, 1);
