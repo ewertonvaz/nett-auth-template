@@ -1,4 +1,4 @@
-# NTT Auth Template
+# NETT Auth Template
 
 Este projeto é um template de servidor que pode ser utilizado como ponto de partida para desenvolvimento de uma API de autenticação e para aplicações web. 
 
@@ -6,7 +6,7 @@ Ele é composto de um servidor implementado em NodeJS e Type ORM.
 
 Faz parte do projeto um exemplo de front-end desenvolvido em Vue.js, mas que pode ser facilmente substiutuído pelo frameworjk de sua preferência. Escrevi em Vue.js porque é o framework que gosto mais e conheço melhor.
 
-A sigla NTT vem das inicias de Node.Js, Typescript e TypeORM, e o projeto foi criado para fins de aprendizado destas tecnologias.
+A sigla NETT vem das inicias de Node.Js, Express, Typescript e TypeORM, e o projeto foi criado para fins de aprendizado destas tecnologias.
 
 ## Pré Requisitos
 
@@ -84,7 +84,7 @@ Copiar a chave gerada (a string que é o valor do campo *secret_key*) usando o c
 
 Para testar o funcionamento do servidor você poderá usar o front end que desenvolvi para ser usado em conjunto com este server.  O projeto do front end está no seguinte reposítporio do GIT Hub:
 
-https://github.com/ewertonvaz/vue-ntt-frontend.git
+https://github.com/ewertonvaz/vue-nett-frontend.git
 
 Outra opção é utilizar o Postman acessando os end-points da api que serão descritos abaixo.
 
