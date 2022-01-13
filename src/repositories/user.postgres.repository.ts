@@ -109,6 +109,38 @@ class UserRepository {
         }
     }
 
+    async updatePassword(user : User, actual: String, newpasswd: String) : Promise<User|null>  {
+        const passwdQuery = `
+        SELECT PGP_SYM_DECRYPT(password::bytea, '${key + user.email}') as senha 
+        FROM "user" 
+        WHERE  uuid = '${user.uuid}';`;
+
+        const { rows } = await postgresDB.query<{ senha : string}>(passwdQuery);
+        const [ senha ] = rows;
+
+        if ( actual === senha.senha ) {
+          const updateQuery = `
+            UPDATE "user"
+            SET password = PGP_SYM_ENCRYPT($1, '${key + user.email}') 
+            WHERE uuid = $2
+            RETURNING uuid, name, email, is_admin, PGP_SYM_DECRYPT(password::bytea, '${key + user.email}') as password 
+          ;`;
+          const values = [newpasswd, user.uuid ];
+          try {
+            const result = await postgresDB.query<User>(updateQuery, values);
+            const linhas = result.rows;
+            const [ updatedUser ] = linhas;
+            if (updatedUser) {
+                return updatedUser;
+            } else { return null }
+          } catch(err) {
+            return null;
+          }
+        } else {
+          return null;
+        }
+    }
+
     async listUsers() {
         const query = `SELECT uuid, name, email, user_token, email_validated, is_admin
         FROM "user";`;

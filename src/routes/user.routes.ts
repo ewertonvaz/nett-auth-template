@@ -186,4 +186,34 @@ usersRoute.put('/delete', jwtAuthenticator, async (req: Request, res: Response, 
     }
 });
 
+usersRoute.put('/changepasswd', jwtAuthenticator, async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+    const { actual, newpasswd } = req.body;
+    var errorsToSend = []
+    if (!user) {
+        errorsToSend.push('Usuário não encontrado!');
+        res.status(StatusCodes.NOT_FOUND).send({ errors: errorsToSend });
+        return;
+    }
+
+    const actualUser = await userRepository.findByUUID( user.uuid );
+    if (!actualUser) {
+        errorsToSend.push('Usuário não encontrado!');
+        res.status(StatusCodes.NOT_FOUND).send({ errors: errorsToSend });
+        return;
+    }
+
+    if ( user.name !== actualUser.name || user.email !== actualUser.email ) {
+        errorsToSend.push('Nome, e-mail ou senha inválidos!')
+        res.status(StatusCodes.BAD_REQUEST).send({ errors: errorsToSend });
+        return;
+    }
+    const result = await userRepository.updatePassword(actualUser, actual, newpasswd);
+    if ( result ) {
+        res.status(StatusCodes.OK).json( result );
+    } else {
+        res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+});
+
 export default usersRoute;

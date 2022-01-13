@@ -102,6 +102,34 @@ class UserRepository {
         }
     }
 
+    async updatePassword(user : User, actual: String, newpasswd: String) : Promise<User|null>  {
+        const passwdQuery = `
+        SELECT uuid, name, email, is_admin, CAST(AES_DECRYPT(UNHEX(password), CONCAT('${key}', email)) as CHAR) as password 
+        FROM user 
+        WHERE  uuid = '${user.uuid}';`;
+        const [ actualUser ] = await mysqlDB.query<RowDataPacket[]>(passwdQuery);
+        if ( actual === actualUser[0].password) {
+          const updateQuery = `
+            UPDATE user
+            SET password = HEX(AES_ENCRYPT(?, '${key + user.email}', 512)) 
+            WHERE uuid = ?
+          ;`;
+          const values = [newpasswd, user.uuid ];
+          try {
+            const result  = await mysqlDB.query(updateQuery, values);
+            const { affectedRows } = result[0] as ResultSetHeader;
+            if (affectedRows === 1) {
+                const [ updatedUser ] = await mysqlDB.query<RowDataPacket[]>(passwdQuery);
+                return updatedUser[0] as User;
+            } else { return null }
+          } catch(err) {
+            return null;
+          }
+        } else {
+          return null;
+        }
+    }
+
     async listUsers() {
         const query = `SELECT uuid, name, email, user_token, email_validated, is_admin
         FROM user;`;
