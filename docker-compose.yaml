@@ -1,7 +1,8 @@
 version: "3"
 services:
   mysql:
-    # Após a inicialização do container executar o comando abaixo
+    # Após a inicialização dos container executar os comando abaixo:
+    # docker exec -i postgres sh -c 'exec psql -d authdb -U postgres < /mnt/app/init-postgres.sql'
     # docker exec -i mysql sh -c 'exec mysql -u root -p"$MYSQL_ROOT_PASSWORD" < /mnt/app/script-mysql.sql'
     image: mysql
     container_name: mysql
@@ -16,9 +17,10 @@ services:
       MYSQL_ROOT_PASSWORD: secret
 
   postgres:
-    build:
-      context: ./_volumes/dockerfiles
+    image: postgres
     container_name: postgres
+    volumes: 
+      - ./_volumes/scripts:/mnt/app
     ports:
       - 5432:5432
     restart: always

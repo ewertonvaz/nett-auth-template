@@ -45,9 +45,11 @@ O comando acima irá produzir uma saída com o valor de *secret_key* gerado de f
 ```
 docker-compose up -d
 ```
-Aguardar a inicialização dos containers, principalmente o do MySQL (leia obervação abaixo), e depois executar o comando:
+Aguardar a inicialização dos containers, principalmente o do MySQL (leia obervação abaixo), e depois executar os comandos:
 
 ```
+docker exec -i postgres sh -c 'exec psql -d authdb -U postgres < /mnt/app/init-postgres.sql'
+
 docker exec -i mysql sh -c 'exec mysql -u root -p"$MYSQL_ROOT_PASSWORD" < /mnt/app/script-mysql.sql'
 ```
 

@@ -6,4 +6,4 @@ node_modules
 dist/config/settings.js
 src/config/settings.ts
 _volumes/scripts/script-mysql.sql
-_volumes/dockerfiles/init.sql
+_volumes/scripts/init-postgres.sql

@@ -12,9 +12,9 @@ var originalContent = readFile('.\\_volumes\\scripts\\script-mysql.samp.sql');
 var newContent = originalContent.replace("Use o script yarn generate e coloque sua chave secreta aqui", key);
 writeFile('.\\_volumes\\scripts\\script-mysql.sql', newContent);
 
-var originalContent = readFile('.\\_volumes\\dockerfiles\\init.samp.sql');
+var originalContent = readFile('.\\_volumes\\scripts\\init-postgres.samp.sql');
 var newContent = originalContent.replace("Use o script yarn generate e coloque sua chave secreta aqui", key);
-writeFile('.\\_volumes\\dockerfiles\\init.sql', newContent);
+writeFile('.\\_volumes\\scripts\\init-postgres.sql', newContent);
 
 function generateKey(){
     const salt = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
