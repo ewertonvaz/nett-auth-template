@@ -125,6 +125,7 @@ usersRoute.put('/update', jwtAuthenticator, async (req: Request, res: Response, 
         res.status(StatusCodes.FORBIDDEN).send({ errors: errorsToSend });
         return;
     }
+
     if ( !userData.name || !userData.email || !userData.uuid ) {
         errorsToSend.push('Nome ou e-mail inválidos!')
         res.status(StatusCodes.BAD_REQUEST).send({ errors: errorsToSend });
@@ -182,17 +183,31 @@ usersRoute.post('/register', async (req: Request, res: Response, next: NextFunct
 });
 
 usersRoute.delete('/delete', jwtAuthenticator, async (req: Request, res: Response, next: NextFunction) => {
-    const { uuid } = req.body;
-    const user =  await userRepository.findByUUID( uuid );
+    const { uuid } = req.user;
+    const user = await userRepository.findByUUID( uuid );
     var errorsToSend = []
 
-    if (!user) {
+    if ( !user ) {
+        errorsToSend.push('Usuário não autenticado ou não encontrado!')
+        res.status(StatusCodes.NOT_FOUND).send({ errors: errorsToSend });
+        return;
+    }
+    if ( !user.is_admin ) {
+        errorsToSend.push('Somente Administradores possuem acesso a este recurso!')
+        res.status(StatusCodes.FORBIDDEN).send({ errors: errorsToSend });
+        return;
+    }
+
+    const deletedUuid = req.body.uuid;
+    const deletedUser =  await userRepository.findByUUID( deletedUuid );
+
+    if (!deletedUser) {
         errorsToSend.push('Usuário não encontrado!');
         res.status(StatusCodes.NOT_FOUND).send({ errors: errorsToSend });
         return;
     }
     try {
-       const result = await userRepository.deleteUser(user);
+       const result = await userRepository.deleteUser(deletedUser);
        if ( !result || result < 1 ) {
             errorsToSend.push('Usuário não encontrado!');
             res.status(StatusCodes.NOT_FOUND).send({ errors: errorsToSend });
@@ -200,9 +215,9 @@ usersRoute.delete('/delete', jwtAuthenticator, async (req: Request, res: Respons
        } else {
             res.status(StatusCodes.OK).send({ 
               user: {
-                uuid: user.uuid,
-                name: user.name,
-                email: user.email
+                uuid: deletedUser.uuid,
+                name: deletedUser.name,
+                email: deletedUser.email
               }
             });
        }
