@@ -68,8 +68,21 @@ usersRoute.post(`/login`, async (req: Request, res: Response, next: NextFunction
 });
 
 usersRoute.post('/create', jwtAuthenticator, async (req: Request, res: Response, next: NextFunction) => {
+    const { uuid } = req.user;
+    const user = await userRepository.findByUUID( uuid );
     const userData = req.body;
     var errorsToSend = []
+
+    if ( !user ) {
+        errorsToSend.push('Usuário não autenticado ou não encontrado!')
+        res.status(StatusCodes.NOT_FOUND).send({ errors: errorsToSend });
+        return;
+    }
+    if ( !user.is_admin ) {
+        errorsToSend.push('Somente Administradores possuem acesso a este recurso!')
+        res.status(StatusCodes.FORBIDDEN).send({ errors: errorsToSend });
+        return;
+    }
 
     if ( !userData.name || !userData.email || !userData.password ) {
         errorsToSend.push('Nome, e-mail ou senha inválidos!')
@@ -97,28 +110,40 @@ usersRoute.post('/create', jwtAuthenticator, async (req: Request, res: Response,
 });
 
 usersRoute.put('/update', jwtAuthenticator, async (req: Request, res: Response, next: NextFunction) => {
+    const { uuid } = req.user;
+    const user = await userRepository.findByUUID( uuid );
     const userData = req.body;
     var errorsToSend = []
 
+    if ( !user ) {
+        errorsToSend.push('Usuário não autenticado ou não encontrado!')
+        res.status(StatusCodes.NOT_FOUND).send({ errors: errorsToSend });
+        return;
+    }
+    if ( !user.is_admin ) {
+        errorsToSend.push('Somente Administradores possuem acesso a este recurso!')
+        res.status(StatusCodes.FORBIDDEN).send({ errors: errorsToSend });
+        return;
+    }
     if ( !userData.name || !userData.email || !userData.uuid ) {
         errorsToSend.push('Nome ou e-mail inválidos!')
         res.status(StatusCodes.BAD_REQUEST).send({ errors: errorsToSend });
         return;
     }
-    const user = await userRepository.updateUser(userData);
-    if (!user) {
+    const updateUser = await userRepository.updateUser(userData);
+    if (!updateUser) {
         errorsToSend.push('Não foi possível atualizar o usuário!')
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ errors: errorsToSend });
         return;
     }
-    if ( !!user ) {
+    if ( !!updateUser ) {
         res.status(StatusCodes.OK).json({
-          uuid: user.uuid,
-          name: user.name,
-          email: user.email,
-          user_token: user.user_token,
-          email_validated : user.email_validated,
-          is_admin: user.is_admin
+          uuid: updateUser.uuid,
+          name: updateUser.name,
+          email: updateUser.email,
+          user_token: updateUser.user_token,
+          email_validated : updateUser.email_validated,
+          is_admin: updateUser.is_admin
         });
     } else {
         res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);

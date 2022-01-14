@@ -1,4 +1,3 @@
-
 export default {
   SECRET_KEY: "Use yarn generate para gerar esta chave",
   ADM_TOKEN_EXPIRES: "30m",
