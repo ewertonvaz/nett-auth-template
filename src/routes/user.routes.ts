@@ -156,7 +156,7 @@ usersRoute.post('/register', async (req: Request, res: Response, next: NextFunct
     }
 });
 
-usersRoute.put('/delete', jwtAuthenticator, async (req: Request, res: Response, next: NextFunction) => {
+usersRoute.delete('/delete', jwtAuthenticator, async (req: Request, res: Response, next: NextFunction) => {
     const { uuid } = req.body;
     const user =  await userRepository.findByUUID( uuid );
     var errorsToSend = []
