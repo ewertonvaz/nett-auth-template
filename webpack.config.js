@@ -78,6 +78,7 @@ module.exports = {
         /mssql/,
         /mysql/,
         /oracledb/,
+        /pg-native/,
         /pg-query-stream/,
         /react-native-sqlite-storage/,
         /redis/,
