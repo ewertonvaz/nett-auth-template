@@ -1,0 +1,42 @@
+[
+    {
+        "name" : "authdb",
+        "type": "mysql",
+        "host": "localhost",
+        "port": 3306,
+        "password": "secret",
+        "username": "root",
+        "database": "authdb",
+        "synchronize": true,
+        "logging": false,
+        "entities": [
+            "src/entity/auth/*.{js,ts}"
+        ],
+        "migrations": [
+        "src/migration/auth/*.{js,ts}"
+        ],
+        "subscribers": [
+        "src/subscriber/auth/*.{js,ts}"
+        ]
+    },
+    {
+        "name" : "appdata",
+        "type": "mysql",
+        "host": "localhost",
+        "port": 3306,
+        "password": "secret",
+        "username": "root",
+        "database": "appdata",
+        "synchronize": true,
+        "logging": false,
+        "entities": [
+            "src/entity/appdata/*.{js,ts}"
+        ],
+        "migrations": [
+            "src/migration/appdata/*.{js,ts}"
+        ],
+        "subscribers": [
+            "src/subscriber/appdata/*.{js,ts}"
+        ]
+    }
+]

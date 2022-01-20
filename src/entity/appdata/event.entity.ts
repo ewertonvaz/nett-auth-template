@@ -1,7 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, getConnection } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, getConnection, getConnectionManager } from 'typeorm';
+
+// const connection = getConnection('appdata');
+// const connection = getConnectionManager().get("appdata");
 
 @Entity()
 export class Event extends BaseEntity {
+    // private usedConnection = connection;
+
     @PrimaryGeneratedColumn('increment')
     id: number | undefined;
 
@@ -16,7 +21,7 @@ export class Event extends BaseEntity {
 
     constructor() {
         super();
-        const connection = getConnection('appdata');
+        const connection = getConnectionManager().get("appdata");
         Event.useConnection(connection);
     }
 }

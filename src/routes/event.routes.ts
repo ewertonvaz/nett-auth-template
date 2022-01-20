@@ -1,9 +1,13 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import jwtAuthenticator from '../middlewares/jwt.authentication.middleware';
 import { Event } from '../entity/appdata/event.entity';
+// import { getConnection } from 'typeorm';
 import { StatusCodes } from 'http-status-codes';
 
 const eventsRoute = Router();
+
+//const connection = getConnection('appdata');
+//Event.useConnection(connection);
 
 eventsRoute.get(`/dashboard`, jwtAuthenticator, async (req: Request, res: Response, next : NextFunction) => {
     const user = JSON.stringify(req.user);

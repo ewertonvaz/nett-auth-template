@@ -1,5 +1,5 @@
 import conf from '../../config/settings';
-export const auth = { 
+export const auth = {
     name : "auth",
     type: "mysql",
     host: conf.MYSQL.host,
