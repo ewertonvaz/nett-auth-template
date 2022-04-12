@@ -15,5 +15,10 @@ export default {
     user: 'postgres',
     password: 'secret',
     database: 'authdb'
+  },
+  MS_AD: {
+    url: 'ldap://dc.domain.com',
+    user: 'username@domain.com',
+    pass: 'password'
   }
 }

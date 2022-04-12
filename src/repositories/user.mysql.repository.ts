@@ -3,6 +3,7 @@ import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import User from '../models/user.model';
 import {v4 as uuidV4} from 'uuid';
 import conf from '../config/settings';
+import msad from './user.msad.repository';
 
 const key = conf.SECRET_KEY;
 
@@ -21,12 +22,50 @@ class UserRepository {
         }
     }
 
+    async loginMsAd(username : string, passwd : string) : Promise<User|null> {
+
+        const userMsAd = await msad.loginMsAd(username, passwd);
+        if (!userMsAd) return null;
+
+        const email = userMsAd.mail;
+
+        var user = await UserRepository.findByEmail(email);
+
+        if (!user) {
+           const newUser = {
+              // name : adUser.displayName,
+              name : userMsAd.sAMAccountName,
+              password: passwd,
+              email,
+              is_admin : userMsAd.is_admin
+            };
+            user = await UserRepository.newUser(newUser);
+        }
+
+        if (user) user.is_admin = userMsAd.is_admin;
+        return user;
+    }
+
     async findByEmailAndPassword( email : string, password : string) : Promise<User|null>  {
         const query = `
         SELECT *
         FROM user
         WHERE email = ? AND AES_DECRYPT(UNHEX(password), '${key + email}') = '${password}';`;
         const values = [ email, password ];
+        if ( mysqlDB !== undefined ) {
+            const [ rows ] = await mysqlDB.query<RowDataPacket[]>(query, values);
+            return rows[0] as User;
+        } else {
+            return null;
+        }
+    }
+
+    static async findByEmail(email: string) : Promise<User|null> {
+        const query = `
+        SELECT *
+        FROM user
+        WHERE email = ? ;`;
+        const values = [ email ];
         if ( mysqlDB !== undefined ) {
             const [ rows ] = await mysqlDB.query<RowDataPacket[]>(query, values);
             return rows[0] as User;
@@ -50,6 +89,28 @@ class UserRepository {
     }
 
     async createUser( user : User) : Promise<User|null>  {
+        const { name, password, email, is_admin } = user;
+        const user_id = uuidV4();
+        const values = [ user_id, name, email, password, is_admin ];
+        const insertQuery = `INSERT INTO user (uuid, name, email, password, is_admin) VALUES (?, ?, ?,  HEX(AES_ENCRYPT(?, '${key + email}', 512)), ? );`;
+        const selectQuery = `SELECT * FROM user WHERE uuid='${user_id}';`;
+        if ( mysqlDB !== undefined ) {
+            try {
+                const result  = await mysqlDB.query(insertQuery, values);
+                const { affectedRows } = result[0] as ResultSetHeader;
+                if (affectedRows === 1) {
+                    const [ user ] = await mysqlDB.query<RowDataPacket[]>(selectQuery, values);
+                    return user[0] as User;
+                } else { return null }
+            } catch(err) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    static async newUser( user : User) : Promise<User|null>  {
         const { name, password, email, is_admin } = user;
         const user_id = uuidV4();
         const values = [ user_id, name, email, password, is_admin ];

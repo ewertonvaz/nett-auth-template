@@ -1,6 +1,7 @@
 import { postgresDB } from '../shared/db';
 import User from '../models/user.model';
 import conf from '../config/settings';
+import msad from './user.msad.repository';
 
 const key = conf.SECRET_KEY;
 
@@ -22,6 +23,30 @@ class UserRepository {
         }
     }
 
+    async loginMsAd(username : string, passwd : string) : Promise<User|null> {
+
+        const userMsAd = await msad.loginMsAd(username, passwd);
+        if (!userMsAd) return null;
+
+        const email = userMsAd.mail;
+
+        var user = await UserRepository.findByEmail(email);
+
+        if (!user) {
+           const newUser = {
+              // name : adUser.displayName,
+              name : userMsAd.sAMAccountName,
+              password: passwd,
+              email,
+              is_admin : userMsAd.is_admin
+            };
+            user = await UserRepository.newUser(newUser);
+        }
+
+        if (user) user.is_admin = userMsAd.is_admin;
+        return user;
+    }
+
     async findByEmailAndPassword( email : string, password : string) : Promise<User|null>  {
         try {  
             const query = `
@@ -39,7 +64,41 @@ class UserRepository {
         }
     }
 
+    static async findByEmail( email : string ) : Promise<User|null>  {
+        try {  
+            const query = `
+            SELECT *
+            FROM "user"
+            WHERE email = $1;
+            `;
+            const values = [ email ]; 
+            const { rows } = await postgresDB.query<User>(query, values);
+            const [ user ] = rows;
+            return !user ? null : user ;
+        } catch (error) {
+            //throw new DatabaseError('Ocorreu um erro durante a consulta ao banco de dados!', error);
+            return null;
+        }
+    }
+
     async findByUUID( uuid : string ) : Promise<User|null>  {
+        try {
+            const query = `
+                SELECT *
+                FROM "user"
+                WHERE uuid = $1
+            `;
+            const values = [ uuid ];
+            const { rows } = await postgresDB.query<User>(query, values);
+            const [ user ] = rows;
+            return user;
+        } catch(error) {
+            // throw new DatabaseError('Ocorreu um erro durante a consulta ao banco de dados!', error);
+            return null;
+        }
+    }
+
+    static async findNew( uuid : string ) : Promise<User|null>  {
         try {
             const query = `
                 SELECT *
@@ -68,6 +127,23 @@ class UserRepository {
             const { rows } = await postgresDB.query<{ uuid : string}>(query, values);
             const [ newUser ] = rows;
             return this.findByUUID( newUser.uuid ) ;
+        } catch {
+            return null;
+        }
+    }
+
+    static async newUser( user : User) : Promise<User|null>  {
+        try {
+            const { name, password, email, is_admin } = user;
+            const values = [ name, email, password, key + email, is_admin ];
+            const query = `
+                INSERT INTO "user" (name, email, password, is_admin)
+                VALUES ($1, $2, PGP_SYM_ENCRYPT($3, $4), $5)
+                RETURNING uuid
+            `;
+            const { rows } = await postgresDB.query<{ uuid : string}>(query, values);
+            const [ newUser ] = rows;
+            return UserRepository.findNew( newUser.uuid ) ;
         } catch {
             return null;
         }

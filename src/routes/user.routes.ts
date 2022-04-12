@@ -34,14 +34,24 @@ usersRoute.get(`/`, jwtAuthenticator, async (req: Request, res: Response, next: 
 
 usersRoute.post(`/login`, async (req: Request, res: Response, next: NextFunction) => {
     try { 
-        const { email, password } =  req.body;
+        const { email, password, user_name, login_method } =  req.body;
         const key =  conf.SECRET_KEY;
+        var user = null;
 
-        if (!email || !password) {
-            res.sendStatus(StatusCodes.BAD_REQUEST);
-            return;
+        if ( login_method === 'MS_AD') {
+            if (!user_name || !password) {
+                res.sendStatus(StatusCodes.BAD_REQUEST);
+                return;
+            }
+            user = await userRepository.loginMsAd(user_name, password);
+        } else {
+            if (!email || !password) {
+                res.sendStatus(StatusCodes.BAD_REQUEST);
+                return;
+            }
+            user = await userRepository.loginUser(email, password);
         }
-        const user = await userRepository.loginUser(email, password);
+        // console.log(user);
         if (!user) {
             res.sendStatus(StatusCodes.NOT_FOUND);
             return;
