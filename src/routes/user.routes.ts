@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import userRepository from '../repositories/user.mysql.repository';
-//import userRepository from '../repositories/user.postgres.repository';
+// import userRepository from '../repositories/user.postgres.repository';
 import jwtAuthenticator from '../middlewares/jwt.authentication.middleware';
 import JWT from 'jsonwebtoken';
 import conf from '../config/settings';
@@ -10,7 +10,14 @@ const usersRoute = Router();
 
 usersRoute.get(`/`, jwtAuthenticator, async (req: Request, res: Response, next: NextFunction) => {
     const { uuid } = req.user;
-    const user = await userRepository.findByUUID( uuid );
+    const { login_method } = req.query;
+    var user = null;
+
+    if ( login_method === 'MS_AD') {
+        user = await userRepository.findMsAdByUUID( uuid );
+    } else {
+        user = await userRepository.findByUUID( uuid );
+    }
     var errorsToSend = []
 
     if ( !user ) {

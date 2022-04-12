@@ -98,6 +98,25 @@ class UserRepository {
         }
     }
 
+    async findMsAdByUUID( uuid : string ) : Promise<User|null>  {
+        try {
+            const query = `
+                SELECT *
+                FROM "user"
+                WHERE uuid = $1
+            `;
+            const values = [ uuid ];
+            const { rows } = await postgresDB.query<User>(query, values);
+            const [ user ] = rows;
+            const adUser = await msad.findUser( user.name );
+            if (adUser) user.is_admin = adUser.is_admin;
+            return user;
+        } catch(error) {
+            // throw new DatabaseError('Ocorreu um erro durante a consulta ao banco de dados!', error);
+            return null;
+        }
+    }
+
     static async findNew( uuid : string ) : Promise<User|null>  {
         try {
             const query = `

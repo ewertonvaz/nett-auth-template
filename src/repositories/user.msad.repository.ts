@@ -8,12 +8,15 @@ class MsAdRepository {
 
         if(authenticated) {
           userMsAd = await ad.getUser(username);
-          // const is_admin = await ad.isMemberOf(username, 'Suporte');
         } else {
           return null;
         }
 
         return userMsAd;
+    }
+
+    async findUser( username: string) : Promise<MsAdUser|null>  {
+      return await ad.getUser(username);
     }
 }
 

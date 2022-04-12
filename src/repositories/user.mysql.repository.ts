@@ -88,6 +88,24 @@ class UserRepository {
         }
     }
 
+    async findMsAdByUUID( uuid : string ) : Promise<User|null>  {
+        const query = `
+        SELECT *
+        FROM user
+        WHERE uuid = ? ;`;
+        const values = [ uuid ];
+        if ( mysqlDB !== undefined ) {
+            const [ rows ] = await mysqlDB.query<RowDataPacket[]>(query, values);
+            const user = rows[0] as User;
+            const adUser = await msad.findUser( user.name );
+
+            if (adUser) user.is_admin = adUser.is_admin;
+            return user;
+        } else {
+            return null;
+        }
+    }
+
     async createUser( user : User) : Promise<User|null>  {
         const { name, password, email, is_admin } = user;
         const user_id = uuidV4();
