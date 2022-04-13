@@ -5,6 +5,7 @@ type User = {
     name: string;
     email: string;
     password?: string;
+    username?: string;
     user_token?: string;
     email_validated?: boolean;
     is_admin: boolean;

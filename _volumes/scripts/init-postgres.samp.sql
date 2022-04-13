@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     name VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
     password TEXT NOT NULL,
+    username VARCHAR NULL,
     user_token VARCHAR NULL,
     email_validated BOOLEAN NOT NULL DEFAULT false,
     is_admin BOOLEAN NOT NULL DEFAULT false,
@@ -21,5 +22,5 @@ DO $$
 DECLARE  
    secretkey VARCHAR := CONCAT('Use o script yarn generate e coloque sua chave secreta aqui','admin@mysite.com');  
 BEGIN  
-   INSERT INTO "user" (name, email, password, is_admin) VALUES ('admin', 'admin@mysite.com', PGP_SYM_ENCRYPT('secret', secretkey ), true);
+   INSERT INTO "user" (name, email, password, username, is_admin) VALUES ('Site Administrator - PGSQL', 'admin@mysite.com', PGP_SYM_ENCRYPT('secret', secretkey ), 'admin', true);
 END $$;

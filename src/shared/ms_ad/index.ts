@@ -1,5 +1,6 @@
 import conf from '../../config/settings';
 import AD from 'ad2';
+import MsAdGroup from '../../models/msadgroup';
 
 const adconfig = conf.MS_AD;
 const adConnect = new AD(adconfig);
@@ -13,7 +14,7 @@ export default {
     async getUser(username : string){
         const admGroup = 'Suporte.pa';
         const adUser = await adConnect.user(username).get();
-        adUser.is_admin = adUser.groups.find( item => item.cn === admGroup ) ? true : false;
+        adUser.is_admin = adUser.groups.find( (item : MsAdGroup) => item.cn === admGroup ) ? true : false;
         return adUser;
     },
 

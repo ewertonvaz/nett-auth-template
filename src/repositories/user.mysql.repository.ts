@@ -33,8 +33,8 @@ class UserRepository {
 
         if (!user) {
            const newUser = {
-              // name : adUser.displayName,
-              name : userMsAd.sAMAccountName,
+              name : userMsAd.displayName,
+              username : userMsAd.sAMAccountName,
               password: passwd,
               email,
               is_admin : userMsAd.is_admin
@@ -97,8 +97,9 @@ class UserRepository {
         if ( mysqlDB !== undefined ) {
             const [ rows ] = await mysqlDB.query<RowDataPacket[]>(query, values);
             const user = rows[0] as User;
-            const adUser = await msad.findUser( user.name );
+            if (!user) return null;
 
+            const adUser = user.username ? await msad.findUser(user.username) : null;
             if (adUser) user.is_admin = adUser.is_admin;
             return user;
         } else {
@@ -107,10 +108,10 @@ class UserRepository {
     }
 
     async createUser( user : User) : Promise<User|null>  {
-        const { name, password, email, is_admin } = user;
+        const { name, password, email, username, is_admin } = user;
         const user_id = uuidV4();
-        const values = [ user_id, name, email, password, is_admin ];
-        const insertQuery = `INSERT INTO user (uuid, name, email, password, is_admin) VALUES (?, ?, ?,  HEX(AES_ENCRYPT(?, '${key + email}', 512)), ? );`;
+        const values = [ user_id, name, email, password, username, is_admin ];
+        const insertQuery = `INSERT INTO user (uuid, name, email, password, username, is_admin) VALUES (?, ?, ?,  HEX(AES_ENCRYPT(?, '${key + email}', 512)), ?, ? );`;
         const selectQuery = `SELECT * FROM user WHERE uuid='${user_id}';`;
         if ( mysqlDB !== undefined ) {
             try {
@@ -129,10 +130,10 @@ class UserRepository {
     }
 
     static async newUser( user : User) : Promise<User|null>  {
-        const { name, password, email, is_admin } = user;
+        const { name, password, email, username, is_admin } = user;
         const user_id = uuidV4();
-        const values = [ user_id, name, email, password, is_admin ];
-        const insertQuery = `INSERT INTO user (uuid, name, email, password, is_admin) VALUES (?, ?, ?,  HEX(AES_ENCRYPT(?, '${key + email}', 512)), ? );`;
+        const values = [ user_id, name, email, password, username, is_admin ];
+        const insertQuery = `INSERT INTO user (uuid, name, email, password, username, is_admin) VALUES (?, ?, ?,  HEX(AES_ENCRYPT(?, '${key + email}', 512)), ?, ? );`;
         const selectQuery = `SELECT * FROM user WHERE uuid='${user_id}';`;
         if ( mysqlDB !== undefined ) {
             try {
@@ -151,15 +152,15 @@ class UserRepository {
     }
 
     async updateUser(user : User) : Promise<User|null>  {
-        const { uuid, name, email, is_admin } = user;
-        var values = [name, email, is_admin, uuid ];
+        const { uuid, name, email, username, is_admin } = user;
+        var values = [name, email, username, is_admin, uuid ];
         const passwdQuery = `
-          SELECT uuid, name, email, is_admin, CAST(AES_DECRYPT(UNHEX(password), CONCAT('${key}', email)) as CHAR) as password 
+          SELECT uuid, name, email, username, is_admin, CAST(AES_DECRYPT(UNHEX(password), CONCAT('${key}', email)) as CHAR) as password 
           FROM user 
           WHERE  uuid = '${uuid}';`;
         const updateQuery = `
             UPDATE user
-            SET password = HEX(AES_ENCRYPT(?, '${key + email}', 512)), name = ?, email = ?, is_admin = ? 
+            SET password = HEX(AES_ENCRYPT(?, '${key + email}', 512)), name = ?, email = ?, username = ?, is_admin = ? 
             WHERE uuid = ?
         ;`;
         if ( mysqlDB !== undefined ) {
@@ -183,7 +184,7 @@ class UserRepository {
 
     async updatePassword(user : User, actual: String, newpasswd: String) : Promise<User|null>  {
         const passwdQuery = `
-        SELECT uuid, name, email, is_admin, CAST(AES_DECRYPT(UNHEX(password), CONCAT('${key}', email)) as CHAR) as password 
+        SELECT uuid, name, email, username, is_admin, CAST(AES_DECRYPT(UNHEX(password), CONCAT('${key}', email)) as CHAR) as password 
         FROM user 
         WHERE  uuid = '${user.uuid}';`;
         const [ actualUser ] = await mysqlDB.query<RowDataPacket[]>(passwdQuery);
@@ -210,7 +211,7 @@ class UserRepository {
     }
 
     async listUsers() {
-        const query = `SELECT uuid, name, email, user_token, email_validated, is_admin
+        const query = `SELECT uuid, name, email, username, user_token, email_validated, is_admin
         FROM user;`;
         if ( mysqlDB !== undefined ) {
             const [ rows ] = await mysqlDB.query<RowDataPacket[]>(query);

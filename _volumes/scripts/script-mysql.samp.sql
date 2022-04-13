@@ -7,6 +7,7 @@ CREATE TABLE `user` (
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar (255) NOT NULL,
+  `username` varchar(255) NULL,
   `user_token` varchar(255) NULL,
   `email_validated` BOOLEAN NOT NULL DEFAULT 0,
   `is_admin` BOOLEAN NOT NULL DEFAULT 0,
@@ -18,4 +19,4 @@ CREATE TABLE `user` (
 
 SET @secret_key = CONCAT('Use o script yarn generate e coloque sua chave secreta aqui', 'admin@mysite.com');
 SET @crypt_str = HEX(AES_ENCRYPT('secret', @secret_key, 512));
-INSERT INTO `authdb`.`user` (`name`, `email`, `password`, `is_admin`) VALUES ('admin', 'admin@mysite.com', @crypt_str, 1);
+INSERT INTO `authdb`.`user` (`name`, `email`, `password`, `username`, `is_admin`) VALUES ('Site Administrator - MySQL', 'admin@mysite.com', @crypt_str,'admin', 1);
