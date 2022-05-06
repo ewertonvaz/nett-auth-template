@@ -4,8 +4,8 @@ import userRepository from '../repositories/user.mysql.repository';
 // import userRepository from '../repositories/user.postgres.repository';
 import jwtAuthenticator from '../middlewares/jwt.authentication.middleware';
 import JWT from 'jsonwebtoken';
-import conf from '../config/settings';
 
+const conf = process.env.NODE_ENV === 'development' ? require('../config/settings_dev').default : require('../config/settings_prod').default;
 const usersRoute = Router();
 
 usersRoute.get(`/`, jwtAuthenticator, async (req: Request, res: Response, next: NextFunction) => {

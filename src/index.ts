@@ -31,3 +31,4 @@ import { appdata } from './shared/orm/appdata.connect';
 
     app.listen(port, () => { console.log(`Server is listen on port ${port}`)});
 })();
+

@@ -83,7 +83,7 @@ Após fazer o login é recomendável que você registre um usuário que será o 
 
 Os passos abaixo devem ser executados SOMENTE no caso de erro durante a execução do comando *npm run generate*
 
-Renomear o arquivo *src\config\settings.example.ts* para *src\config\settings.ts*
+Renomear o arquivo *src\config\settings.example.ts* para *src\config\settings_dev.ts*
 
 Renomear o arquivo *_volumes\scripts\script-mysql.samp.sql* para *_volumes\scripts\script-mysql.sql*
 

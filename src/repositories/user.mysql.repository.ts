@@ -2,8 +2,9 @@ import { mysqlDB } from '../shared/db';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import User from '../models/user.model';
 import {v4 as uuidV4} from 'uuid';
-import conf from '../config/settings';
 import msad from './user.msad.repository';
+
+const conf = process.env.NODE_ENV === 'development' ? require('../config/settings_dev').default : require('../config/settings_prod').default;
 
 const key = conf.SECRET_KEY;
 

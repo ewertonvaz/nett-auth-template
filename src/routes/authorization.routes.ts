@@ -5,8 +5,8 @@ import JWT from 'jsonwebtoken';
 import basicAuthenticator from '../middlewares/basic.authentication.middleware';
 import jwtAuthenticator from '../middlewares/jwt.authentication.middleware';
 import User from '../models/user.model';
-import conf from '../config/settings';
 
+const conf = process.env.NODE_ENV === 'development' ? require('../config/settings_dev').default : require('../config/settings_prod').default;
 const authorizationRoute = Router ();
 
 authorizationRoute.post('/', basicAuthenticator, async (req : Request, res : Response, next : NextFunction) => {

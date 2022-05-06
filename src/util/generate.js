@@ -6,7 +6,7 @@ console.log(`secret_key:`, key);
 
 var originalContent = readFile('.\\src\\config\\settings.example.ts');
 var newContent = originalContent.replace("Use yarn generate para gerar esta chave", key);
-writeFile('.\\src\\config\\settings.ts', newContent);
+writeFile('.\\src\\config\\settings_dev.ts', newContent);
 
 var originalContent = readFile('.\\_volumes\\scripts\\script-mysql.samp.sql');
 var newContent = originalContent.replace("Use o script yarn generate e coloque sua chave secreta aqui", key);

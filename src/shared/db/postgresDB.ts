@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import conf from '../../config/settings';
+const conf = process.env.NODE_ENV === 'development' ? require('../../config/settings_dev').default : require('../../config/settings_prod').default;
 
 const params = {...conf.POSTGRES, database: 'authdb'};
 

@@ -1,9 +1,11 @@
-import conf from '../../config/settings';
 import AD from 'ad2';
 import MsAdGroup from '../../models/msadgroup';
+import MsAdConfig from '../../models/msadconfig';
+
+const conf = process.env.NODE_ENV === 'development' ? require('../../config/settings_dev').default : require('../../config/settings_prod').default;
 
 const adconfig = conf.MS_AD;
-const adConnect = new AD(adconfig);
+const adConnect = new AD(adconfig as MsAdConfig);
 
 export default {
         

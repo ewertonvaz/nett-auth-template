@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import ForbiddenError from '../models/errors/forbidden.error.model';
 import JWT from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';
-import conf from '../config/settings'
+
+const conf = process.env.NODE_ENV === 'development' ? require('../config/settings_dev').default : require('../config/settings_prod').default;
 
 const jwtAuthenticator = async (req : Request, res : Response, next : NextFunction) => {
     try {
