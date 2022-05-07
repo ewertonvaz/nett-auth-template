@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryColumn, Generated } from 'typeorm';
+// const { Entity, Column, PrimaryColumn, Generated } = require('typeorm');
 
 @Entity()
 export class Customer {

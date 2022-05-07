@@ -1,23 +1,30 @@
+const glob = require('glob')
 const path = require('path');
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   mode: "production",
   target: "node",
-  externals: {
-    // typeorm: 'commonjs typeorm'
-  },
-  entry: {
-    index: './src/index.ts',
-    // repo_mysql: './dist/repositories/user.mysql.repository.js',
-    // repo_postgres: './dist/repositories/user.postgres.repository.js',
-    // orm: [ './dist/shared/orm/appdata.connect.js', './dist/shared/orm/auth.connect.js' ]
-  },
+  entry: 
+    glob.sync('./dist/**/*.js').reduce((acc, path) => {
+      const ignoreDirectory = [
+        /types/
+      ];
+      if ( ignoreDirectory.some( value => { if ( path.search(value) === -1) return true; } )) {
+        const entry = path.replace('.js', '').replace('dist/', '')
+        console.log(entry)
+        acc[entry] = path
+      }
+      return acc
+    }, {}),
   output: {
-    filename: 'index.js',
-    //filename: '[name].[contenthash].js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'prod'),
     clean: true
   },
+  plugins: [
+    // new BundleAnalyzerPlugin()
+  ],
   module: {
     rules: [
       {
@@ -28,7 +35,6 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
     fallback: {
       "assert": false,
       "crypto": false,
@@ -44,7 +50,7 @@ module.exports = {
       "stream": false,
       "string_decoder": false,
       "timers": false,
-      "tls": false,
+      // "tls": false,
       "util" : false,
       "url" : false,
       "zlib": false,
@@ -54,22 +60,12 @@ module.exports = {
       'cardinal': path.join(__dirname, 'src/aliases/cardinal.js')
     },
   },
-//   performance: {
-//     hints: false,
-//     maxEntrypointSize: 512000,
-//     maxAssetSize: 512000
-//   },
-//   optimization: {
-//     splitChunks: {
-//       chunks: 'all',
-//       cacheGroups: {
-//         defaultVendors: {
-//           filename: '[name].bundle.js',
-//         },
-//       },
-//     }
-//   },
-
+  optimization: {
+    splitChunks: {
+      // include all types of chunks
+      chunks: 'all',
+    },
+  },
   // https://webpack.js.org/configuration/other-options/#ignorewarnings
   ignoreWarnings: [
     (WebpackError, Compilation) => {
