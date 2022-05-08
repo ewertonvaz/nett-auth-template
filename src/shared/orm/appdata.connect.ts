@@ -3,6 +3,8 @@ import path from 'path';
 const conf = process.env.NODE_ENV === 'development' ? require('../../config/settings_dev').default : require('../../config/settings_prod').default;
 const workdir = (process.env.NODE_ENV === 'development' ? process.env.PWD + '/src' : process.env.PWD) as string;
 
+console.log(process.env.PWD);
+
 export const appdata = {
     name : "appdata",
     type: "mysql",

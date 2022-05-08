@@ -4,7 +4,7 @@ module.exports = {
   mode: "production",
   target: "node",
   externals: {
-    // typeorm: 'commonjs typeorm'
+    typeorm: 'commonjs typeorm'
   },
   entry: {
     index: './src/index.ts',
